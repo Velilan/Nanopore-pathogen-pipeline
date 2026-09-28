@@ -37,7 +37,9 @@ Automated pathogen detection report
 - minimap2
 - samtools
 
-## Usege
+## Usage
+conda env create -f environment.yml
+conda activate citrus-pathogen-pipeline
 
 python pipeline_patogenosV16.py \
 --run-dir datos \
