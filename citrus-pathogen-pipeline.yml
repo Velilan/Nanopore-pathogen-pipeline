@@ -1,0 +1,13 @@
+name: citrus-pathogen-pipeline
+ 
+channels:
+- bioconda
+- conda-forge
+- defaults
+ 
+dependencies:
+- python=3.11
+- kraken2
+- minimap2
+- samtools
+- pip
