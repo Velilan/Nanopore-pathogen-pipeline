@@ -1,17 +1,16 @@
-# Citrus Pathogen Detection Pipeline (Nanopore)
+Citrus Pathogen Detection Pipeline (Nanopore)
 
-Pipeline for detection and identification of major citrus pathogens from Oxford Nanopore sequencing data.
+Pipeline for detection and identification of major citrus pathogens from Oxford Nanopore sequencing data using quality filtering, taxonomic classification, reference mapping and alignment identity-based validation.
 
-## Target pathogens
-
-- Candidatus Liberibacter asiaticus (CaLas)
-- Candidatus Liberibacter africanus (CaLaf)
-- Candidatus Liberibacter americanus (CaLam)
-- Candidatus Liberibacter solanacearum (CaLsol)
-- Liberibacter crescens
-- Xylella fastidiosa
-- Xanthomonas citri
-- Phyllosticta citricarpa
+Target pathogens
+Candidatus Liberibacter asiaticus (CaLas)
+Candidatus Liberibacter africanus (CaLaf)
+Candidatus Liberibacter americanus (CaLam)
+Candidatus Liberibacter solanacearum (CaLsol)
+Liberibacter crescens (BT-0, BT-1)
+Xylella fastidiosa
+Xanthomonas citri
+Phyllosticta citricarpa
 
 ## Workflow
 
@@ -39,7 +38,7 @@ Automated pathogen detection report
 
 ## Usage
 conda env create -f environment.yml
-conda activate citrus-pathogen-pipeline
+conda activate EMERGENOW
 
 python pipeline_patogenosV16.py \
 --run-dir datos \
@@ -64,44 +63,77 @@ Outputs:
 
 ### Liberibacter
 
-1. Kraken2 identifies candidate Liberibacter reads.
-2. Reads are mapped against a custom set of Liberibacter references.
-3. Species assignment is based primarily on:
-- Number of reads with ≥95% identity
-- Mean alignment identity
-- Reads with ≥99% identity
+Candidate reads are identified by Kraken2 and mapped against a custom database containing:
+
+-CaLas
+-CaLaf
+-CaLam
+-CaLsol
+-Liberibacter crescens BT-0
+-Liberibacter crescens BT-1
+
+Species assignment is ranked using:
+
+-Reads >99% identity
+-Reads >97% identity
+-Reads >95% identity
+-Mean alignment identity
+
+Detection states:
+
+-POSITIVE
+-WEAK DETECTION (INCONCLUSIVE)
+-NEGATIVE
 
 ### Xylella fastidiosa
 
-Positive detection:
+Subspecies assignment is ranked using:
 
-- ≥10 mapped reads
-- ≥0.1% genome coverage
+-Reads >99% identity
+-Reads >97% identity
+-Reads >95% identity
+-Mean alignment identity
 
 ### Xanthomonas citri
 
 Positive detection:
 
-- ≥10 mapped reads
-- ≥0.1% genome coverage
+Subspecies assignment is ranked using:
+
+-Reads >99% identity
+-Reads >97% identity
+-Reads >95% identity
+-Mean alignment identity
 
 ### Phyllosticta citricarpa
 
-Positive detection:
+Reference assignment is ranked using:
 
-- ≥10 mapped reads
-- ≥0.1% genome coverage
+-Reads >99% identity
+-Reads >97% identity
+-Reads >95% identity
+-Mean alignment identity
 
-Identity statistics include:
+For P. citricarpa, additional identity ratios are reported:
+95% ratio = reads95 / mapped reads
+97% ratio = reads97 / mapped reads
+99% ratio = reads99 / mapped reads
+These metrics help distinguish true matches from large numbers of low-quality alignments.
 
-- Reads ≥80%
-- Reads ≥85%
-- Reads ≥90%
-- Reads ≥95%
-- Reads ≥97%
-- Reads ≥99%
-- Mean identity
-- Median identity
+Alignment statistics
+
+The following metrics are calculated for every reference:
+
+-Mapped reads
+-Genome coverage (%)
+-Mean depth (X)
+-Mean identity (%)
+-Reads >80% identity
+-Reads >85% identity
+-Reads >90% identity
+-Reads >95% identity
+-Reads >97% identity
+-Reads >99% identity
 
 ## Output files
 
@@ -118,3 +150,6 @@ For each sample/barcode:
 - Pathogen_summary.html
 
 Additional BAM files are generated for each pathogen reference.
+Notes
+
+This pipeline was developed for rapid detection of citrus bacterial and fungal pathogens using Oxford Nanopore sequencing and a custom Kraken2 plus Minimap2 validation workflow. Species calls are based primarily on high-identity read support rather than raw mapping counts alone.
