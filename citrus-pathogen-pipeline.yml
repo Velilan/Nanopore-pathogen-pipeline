@@ -1,4 +1,4 @@
-name: citrus-pathogen-pipeline
+name: EMERGENOW
  
 channels:
 - bioconda
@@ -6,8 +6,8 @@ channels:
 - defaults
  
 dependencies:
-- python=3.11
+- python=3.10
+- fastplong
 - kraken2
 - minimap2
 - samtools
-- pip
